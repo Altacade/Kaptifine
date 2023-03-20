@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Kaptifine</title>
+    <style>
+        body {
+            background-color: black;
+            color: lime;
+            font-family: monospace;
+            margin: 0;
+            padding: 0;
+        }
+
+        input[type="text"] {
+            background-color: #151515;
+            color: lime;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+            font-family: monospace;
+            font-size: 16px;
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+        }
+
+        .command {
+            color: #969696;
+        }
+
+        .response {
+            color: lime;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Welcome to Kaptifine!</h1>
+    <p>Type 'help' for a list of available commands.</p>
+    <div>
+        <p><input type="text" id="command" placeholder=">> Enter a command" autocomplete="off" spellcheck="false"></p>
+        <div id="output"></div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+    </script>
+    <script>
+        const commandInput = document.getElementById('command');
+        const outputDiv = document.getElementById('output');
+        let ipAddress = "";
+        $.get("https://ipinfo.io", function(response) {
+            ipAddress = response.ip; // Set ipAddress variable to the retrieved IP address
+        }, "json");
+
+        commandInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                const command = commandInput.value.trim();
+                const response = executeCommand(command);
+                addResponseToOutput(response);
+                addCommandToOutput(command);
+
+                clearCommandInput();
+            }
+        });
+
+        function executeCommand(command) {
+            if (command === '') {
+                return '';
+            } else if (command === 'help') {
+                return 'Available commands:<br>- help: displays this list of commands<br>- clear: clears the output area<br>- date: displays the current date<br>- say &lt;phrase&gt;: repeats any input<br> - solve &lt;equation&gt;: evaluates equations<br>- random &lt;min&gt; &lt;max&gt;: generates a random number<br>- system: detects the operating system<br>- ip: displays your ip address<br>- about: displays information about this program';
+            } else if (command === 'clear') {
+                outputDiv.innerHTML = '';
+                return '';
+            } else if (command.startsWith('random')) {
+                const args = command.split(' ');
+                if (args.length < 3) {
+                    return 'Invalid syntax. Usage: random &lt;min&gt; &lt;max&gt;';
+                }
+                const min = parseInt(args[1]);
+                const max = parseInt(args[2]);
+                if (isNaN(min) || isNaN(max)) {
+                    return 'Invalid arguments. Must provide valid numbers.';
+                }
+                const result = Math.floor(Math.random() * (max - min + 1)) + min;
+                return `Random number between ${min} and ${max}: ${result}`;
+            } else if (command === 'date') {
+                const date = new Date();
+                return `The current date is ${date.toString()}`;
+            } else if (command.startsWith('say')) {
+                if (command.length <= 3) {
+                    return `Invalid syntax. Usage: say &lt;phrase&gt;`
+                } else {
+                    return command.substring(3);
+                }
+            } else if (command.startsWith('solve')) {
+                if (command.length <= 5) {
+                    return `Invalid syntax. Usage: solve &lt;equation&gt;`
+                } else {
+                    const x = (command.substring(5));
+                    return (eval(x));
+                }
+            } else if (command === 'system') {
+                return navigator.appVersion;
+            } else if (command === 'ip') {
+                return "Your IP is " + ipAddress;
+            } else if (command === 'about') {
+                return 'Kaptifine is a command prompt program built using HTML, CSS, and JavaScript. It allows you to execute various commands and receive responses in real-time.';
+            } else {
+                return `Unknown command: ${command}`;
+            }
+        }
+
+        function addCommandToOutput(command) {
+            const commandDiv = document.createElement('div');
+            commandDiv.classList.add('command');
+            commandDiv.innerHTML = `> ${command}`;
+
+            // Insert new command at the beginning of outputDiv
+            outputDiv.insertBefore(commandDiv, outputDiv.firstChild);
+        }
+
+        function addResponseToOutput(response) {
+            const responseDiv = document.createElement('div');
+            responseDiv.classList.add('response');
+            responseDiv.innerHTML = response;
+
+            // Insert new response at the beginning of outputDiv
+            outputDiv.insertBefore(responseDiv, outputDiv.firstChild);
+        }
+
+        function clearCommandInput() {
+            commandInput.value = '';
+        }
+    </script>
+    <script>
+        const input = document.querySelector('input')
+        input.insertAdjacentHTML('command', 'item1: ')
+    </script>
+</body>
+
+</html>
