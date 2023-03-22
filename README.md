@@ -5,9 +5,9 @@ Nine available commands:
 - help: displays this list of commands
 - clear: clears the output area
 - date: displays the current date
-- say <phrase>: repeats any input
-- solve <equation>: evaluates equations
-- random <min> <max>: generates a random number
+- say &lt;phrase>: repeats any input
+- solve &lt;equation>: evaluates equations
+- random &lt;min> &lt;max>: generates a random number
 - system: detects the operating system
 - ip: displays your ip address
 - about: displays information about this program
